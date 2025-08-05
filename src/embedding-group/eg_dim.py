@@ -84,7 +84,7 @@ def eg(inputfile, outputfile, embedding_list):
                         # concatenation
                         print(herb1_pos_vector.shape)
                         print(herb2_pos_vector.shape)
-                        concatenated_vector = torch.cat((torch.tensor(herb1_pos_vector), torch.tensor(herb2_pos_vector)), dim=1)
+                        concatenated_vector = torch.cat((torch.tensor(herb1_pos_vector).unsqueeze(0), torch.tensor(herb2_pos_vector).unsqueeze(0)), dim=1)
                         # shape
                         # print(concatenated_vector.shape)
                         # store to dict
@@ -121,7 +121,7 @@ def eg(inputfile, outputfile, embedding_list):
                         herb1_pos_vector = loaded_embeddings_dict_CH[m1]
                         herb2_pos_vector = loaded_embeddings_dict_CH[m2]
                         # concat
-                        concatenated_vector = torch.cat((torch.tensor(herb1_pos_vector), torch.tensor(herb2_pos_vector)), dim=1)
+                        concatenated_vector = torch.cat((torch.tensor(herb1_pos_vector).unsqueeze(0), torch.tensor(herb2_pos_vector).unsqueeze(0)), dim=1)
                         #
                         # print(concatenated_vector.shape)
                         # store to dict
@@ -159,7 +159,7 @@ def eg(inputfile, outputfile, embedding_list):
                 # print("herb1:", herb1_pos_vector.size)
                 herb2_pos_vector = loaded_embeddings_dict_CH[key2]
                 # concatenation
-                concatenated_vector = torch.cat((torch.tensor(herb1_pos_vector), torch.tensor(herb2_pos_vector)), dim=1)
+                concatenated_vector = torch.cat((torch.tensor(herb1_pos_vector).unsqueeze(0), torch.tensor(herb2_pos_vector).unsqueeze(0)), dim=1)
     
                 # store to dict
                 concatenated_key = key1 + "," + key2
@@ -180,9 +180,10 @@ def eg(inputfile, outputfile, embedding_list):
 
 
 if __name__ == '__main__':
+    # "bge_embedding.pkl",
     inputfile = "/root/autodl-tmp/pycharmproject-herb1/"
     otuputfile = "/root/autodl-tmp/pycharmproject-herb1/"
-    embedding_list = ["albert_base_embedding.pkl", "bart_base_embedding.pkl"]
+    embedding_list = ["bge_embedding.pkl",  "me5_base_embedding.pkl", "me5_large_embedding.pkl", "me5_large_embedding.pkl", "qwen2_1.5B_embedding.pkl", "sfr1_embedding.pkl", "sfr2_embedding.pkl"]
     for embedding in embedding_list:
         print(f"---------------------------------------- {embedding} --------------------------------")
         eg(inputfile, otuputfile, embedding)
