@@ -1,19 +1,11 @@
 import torch
 import torch.nn as nn
 import pandas as pd
-from transformers import AlbertTokenizer, AlbertModel
+from sentence_transformers import SentenceTransformer
 from tqdm import tqdm
 import pickle
 
 if __name__ == '__main__':
-
-    def pooling(last_hidden_state: torch.Tensor,
-                attention_mask: torch.Tensor=None):
-        s = torch.sum(last_hidden_state * attention_mask.unsqueeze(-1).float(), dim=1)
-        d = attention_mask.sum(dim=1, keepdim=True).float()
-        return s / d
-
-    
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
@@ -33,10 +25,10 @@ if __name__ == '__main__':
     keys = list(data_dict.keys())
     total_length = len(keys)
 
-    tokenizer = AlbertTokenizer.from_pretrained('/root/autodl-tmp/models/albert-base-v2')
-    model = AlbertModel.from_pretrained("/root/autodl-tmp/models/albert-base-v2")
+    # biogpt model
+    model = SentenceTransformer("/root/autodl-tmp/models/bge-large-en-v1.5", trust_remote_code=True)
+    # model.max_seq_length = 8192
     model.to(device)
-
     print("Tokenizer and Model are downloaded success!!!")
 
     # get existing embeddings
@@ -49,15 +41,10 @@ if __name__ == '__main__':
             batch_values = [data_dict[key] for key in batch_keys]
             
             for idx, text in enumerate(batch_values):
-                ### mean pooling
-                inputs = tokenizer(text, return_tensors="pt")
-                outputs = model(**inputs)
-                last_hidden_states = outputs.last_hidden_state
-                embeddings = pooling(last_hidden_states, inputs['attention_mask'])
-
+                embeddings = model.encode(text, normalize_embeddings=True)
                 output_embeddings_dict[batch_keys[idx]] = embeddings
 
-    with open('/root/autodl-tmp/pycharmproject-herb1/ge1/llm_embedding/albert_base_embedding.pkl', 'wb') as pkl_file:
+    with open('/root/autodl-tmp/pycharmproject-herb1/ge1/llm_embedding/bge_embedding.pkl', 'wb') as pkl_file:
         pickle.dump(output_embeddings_dict, pkl_file)
 
     print("embedding saved successfully")

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import pandas as pd
-from transformers import AlbertTokenizer, AlbertModel
+from transformers import RobertaTokenizer, TFRobertaModel
 from tqdm import tqdm
 import pickle
 
@@ -33,9 +33,9 @@ if __name__ == '__main__':
     keys = list(data_dict.keys())
     total_length = len(keys)
 
-    tokenizer = AlbertTokenizer.from_pretrained('/root/autodl-tmp/models/albert-base-v2')
-    model = AlbertModel.from_pretrained("/root/autodl-tmp/models/albert-base-v2")
-    model.to(device)
+    tokenizer = RobertaTokenizer.from_pretrained('/root/autodl-tmp/models/roberta-base')
+    model = TFRobertaModel.from_pretrained('/root/autodl-tmp/models/roberta-base')
+    # model.to(device)
 
     print("Tokenizer and Model are downloaded success!!!")
 
@@ -50,14 +50,14 @@ if __name__ == '__main__':
             
             for idx, text in enumerate(batch_values):
                 ### mean pooling
-                inputs = tokenizer(text, return_tensors="pt")
-                outputs = model(**inputs)
+                inputs = tokenizer(text, return_tensors="tf")
+                outputs = model(inputs)
                 last_hidden_states = outputs.last_hidden_state
                 embeddings = pooling(last_hidden_states, inputs['attention_mask'])
 
                 output_embeddings_dict[batch_keys[idx]] = embeddings
 
-    with open('/root/autodl-tmp/pycharmproject-herb1/ge1/llm_embedding/albert_base_embedding.pkl', 'wb') as pkl_file:
+    with open('/root/autodl-tmp/pycharmproject-herb1/ge1/llm_embedding/robert_base_embedding.pkl', 'wb') as pkl_file:
         pickle.dump(output_embeddings_dict, pkl_file)
 
     print("embedding saved successfully")

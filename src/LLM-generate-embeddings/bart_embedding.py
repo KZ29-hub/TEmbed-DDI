@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import pandas as pd
-from transformers import AlbertTokenizer, AlbertModel
+from transformers import BartTokenizer, BartModel
 from tqdm import tqdm
 import pickle
 
@@ -33,8 +33,8 @@ if __name__ == '__main__':
     keys = list(data_dict.keys())
     total_length = len(keys)
 
-    tokenizer = AlbertTokenizer.from_pretrained('/root/autodl-tmp/models/albert-base-v2')
-    model = AlbertModel.from_pretrained("/root/autodl-tmp/models/albert-base-v2")
+    tokenizer = BartTokenizer.from_pretrained('/root/autodl-tmp/models/bart-base')
+    model = BartModel.from_pretrained('/root/autodl-tmp/models/bart-base')
     model.to(device)
 
     print("Tokenizer and Model are downloaded success!!!")
@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
                 output_embeddings_dict[batch_keys[idx]] = embeddings
 
-    with open('/root/autodl-tmp/pycharmproject-herb1/ge1/llm_embedding/albert_base_embedding.pkl', 'wb') as pkl_file:
+    with open('/root/autodl-tmp/pycharmproject-herb1/ge1/llm_embedding/bart_base_embedding.pkl', 'wb') as pkl_file:
         pickle.dump(output_embeddings_dict, pkl_file)
 
     print("embedding saved successfully")
